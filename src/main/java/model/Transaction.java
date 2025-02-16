@@ -20,10 +20,16 @@ public class Transaction {
         this.targetCard = targetCard;
     }
 
+    public Transaction() {
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }
-
 
     public Integer getUser_id() {
         return user_id;
