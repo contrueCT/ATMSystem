@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class User {
     private Integer id;
     private String name;
-    private String phoneNumber;
+    private String phone;
     private String id_card;
     private String card_number;
     private BigDecimal balance;
@@ -14,9 +14,9 @@ public class User {
     public User() {
     }
 
-    public User(String name, String phoneNumber, String id_card, String card_number, String password) {
+    public User(String name, String phone, String id_card, String card_number, String password) {
         this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.phone = phone;
         this.id_card = id_card;
         this.card_number = card_number;
         this.password = password;
@@ -38,12 +38,12 @@ public class User {
         this.name = name;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getId_card() {

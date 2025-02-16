@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -31,6 +32,12 @@ public class DruidDBConnection {
                             prop.load(in);
                         }
                         dataSource = DruidDataSourceFactory.createDataSource(prop);
+
+                        String sql = "use user";
+                        try (Connection conn = dataSource.getConnection();
+                             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                            pstmt.execute();
+                        }
 
                     }catch (IOException e){
                         e.printStackTrace();
