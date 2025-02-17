@@ -33,6 +33,27 @@ public class TransactionDAOImpl implements TransactionDAO {
         return false;
     }
 
+    public boolean addTransaction(Transaction transaction,Connection conn) {
+        if(transaction == null){
+            return false;
+        }
+        String sql = "insert into transactions (user_id, type, amount, source_card, target_card) value (?,?,?,?,?)";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+            pstmt.setInt(1, transaction.getUser_id());
+            pstmt.setString(2, transaction.getType());
+            pstmt.setBigDecimal(3, transaction.getAmount());
+            pstmt.setString(4, transaction.getSourceCard());
+            pstmt.setString(5, transaction.getTargetCard());
+            pstmt.executeUpdate();
+            return true;
+
+        }catch (SQLException e){
+            System.out.println("添加交易记录失败"+e.getMessage());
+        }
+        return false;
+    }
+
     @Override
     public List<Transaction> findTransactionByCardID(String card_id) {
         String sql = "select * from transactions where source_card = ?";

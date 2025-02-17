@@ -60,10 +60,11 @@ public class DruidDBConnection {
     public static void closeConnection(Connection conn) {
         if(conn != null) {
             try{
+                conn.setAutoCommit(true);
                 conn.close();
             }
             catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println("连接关闭失败");;
             }
         }
     }

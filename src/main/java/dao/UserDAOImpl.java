@@ -52,6 +52,20 @@ public class UserDAOImpl implements UserDAO {
         return false;
     }
 
+    public boolean updateBalance(String card_id, BigDecimal balance,Connection conn) {
+        String sql = "update user set balance = ? where id_card = ?";
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+            pstmt.setBigDecimal(1, balance);
+            pstmt.setString(2, card_id);
+            pstmt.executeUpdate();
+            return true;
+        }catch (SQLException e){
+            System.out.println("添加用户失败:"+ e.getMessage());
+        }
+        return false;
+    }
+
     @Override
     public User findUserById(String card_id) {
         String sql = "select * from user where id_card = ?";
