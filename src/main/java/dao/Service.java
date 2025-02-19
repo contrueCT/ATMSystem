@@ -21,6 +21,7 @@ public class Service {
                 System.out.println("错误：交易记录对象不存在");
                 return false;
             }
+            //存款
             if(transaction.getType().equals("deposit")){
                 User user = userDAO.findUserById(user_id);
                 user.setBalance(user.getBalance().add(transaction.getAmount()));
@@ -41,7 +42,56 @@ public class Service {
                 conn.commit();
                 return true;
             }
-            //其他业务
+            //取款
+            if(transaction.getType().equals("withdraw")){
+                User user = userDAO.findUserById(user_id);
+                user.setBalance(user.getBalance().subtract(transaction.getAmount()));
+                if(user.getBalance().compareTo(BigDecimal.ZERO)<0){
+                    System.out.println("账户余额不足");
+                    return false;
+                }
+                if(userDAO.updateBalance(user.getId_card(), user.getBalance(),conn)){
+                    System.out.println("余额更新成功");
+                }
+                else{
+                    System.out.println("余额更新失败");
+                }
+                if(transactionDAO.addTransaction(transaction,conn)){
+                    System.out.println("交易记录创建成功");
+                }else{
+                    System.out.println("交易记录创建失败");
+                    return false;
+                }
+                conn.commit();
+                return true;
+            }
+            //转账
+            if(transaction.getType().equals("transfer")){
+                User user = userDAO.findUserById(user_id);
+                User target = userDAO.findUserById(transaction.getTargetCard());
+
+                target.setBalance(target.getBalance().add(transaction.getAmount()));
+                user.setBalance(user.getBalance().subtract(transaction.getAmount()));
+                if(user.getBalance().compareTo(BigDecimal.ZERO)<0){
+                    System.out.println("账户余额不足");
+                }
+                if(userDAO.updateBalance(user.getId_card(), user.getBalance(),conn)
+                        && userDAO.updateBalance(transaction.getTargetCard(), target.getBalance(),conn)){
+                    System.out.println("余额更新成功");
+                }
+                else{
+                    System.out.println("余额更新失败");
+                }
+                if(transactionDAO.addTransaction(transaction,conn)){
+                    System.out.println("交易记录创建成功");
+                }else{
+                    System.out.println("交易记录创建失败");
+                    return false;
+                }
+                conn.commit();
+                return true;
+            }
+
             return false;
         }catch(SQLException e){
             System.out.println("操作失败"+e.getMessage());

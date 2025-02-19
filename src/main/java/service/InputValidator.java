@@ -46,4 +46,38 @@ public class InputValidator {
             }
         }
     }
+
+    public static String isValidCard_id() {
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            String input = sc.nextLine().trim().replace(",", "");
+            if(input.isEmpty()){
+                System.out.println("输入格式错误，请重新输入");
+                continue;
+            }
+            if(input.length()<16||input.length()>19){
+                System.out.println("输入格式错误，请重新输入");
+                continue;
+            }
+            return input;
+
+        }
+    }
+
+    public static int isValidInt(int max){
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            String input = sc.nextLine().trim().replace(",", "");
+            if(input.length()!=1){
+                System.out.println("输入格式错误，请重新输入");
+                continue;
+            }
+            int num = Integer.parseInt(input);
+            if(num>max||num<0){
+                System.out.println("输入格式错误，请输入0到"+max+"的数");
+                continue;
+            }
+            return num;
+        }
+    }
 }

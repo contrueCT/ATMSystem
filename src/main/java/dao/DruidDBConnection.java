@@ -33,7 +33,7 @@ public class DruidDBConnection {
                         }
                         dataSource = DruidDataSourceFactory.createDataSource(prop);
 
-                        String sql = "use user";
+                        String sql = "use atm";
                         try (Connection conn = dataSource.getConnection();
                              PreparedStatement pstmt = conn.prepareStatement(sql)) {
                             pstmt.execute();

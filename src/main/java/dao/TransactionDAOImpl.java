@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public List<Transaction> findTransactionByCardID(String card_id) {
         String sql = "select * from transactions where source_card = ?";
-        List<Transaction> transactions = null;
+        List<Transaction> transactions = new ArrayList<Transaction>();
 
         try(Connection conn = DruidDBConnection.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){

@@ -78,4 +78,8 @@ public class Transaction {
     public void setTransactionDate(LocalDateTime transactionDate) {
         this.transactionDate = transactionDate;
     }
+
+    public String toCsvString(){
+        return String.format("%s %s, %s, %.2f, %s, %s,%s", id,user_id, type, amount, sourceCard, targetCard, transactionDate);
+    }
 }

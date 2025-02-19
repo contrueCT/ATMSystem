@@ -69,19 +69,21 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User findUserById(String card_id) {
         String sql = "select * from user where id_card = ?";
-        User user = null;
+        User user = new User();
         try(Connection conn = DruidDBConnection.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
             pstmt.setString(1, card_id);
             ResultSet rs = pstmt.executeQuery();
-            user.setId(rs.getInt("id_card"));
+            rs.next();
+            user.setId(rs.getInt("id"));
             user.setId_card(rs.getString("id_card"));
             user.setName(rs.getString("name"));
             user.setPhone(rs.getString("phone"));
             user.setCard_number(rs.getString("card_number"));
             user.setPassword(rs.getString("password"));
             user.setBalance(rs.getBigDecimal("balance"));
+            return user;
         }catch(SQLException e){
             System.out.println("查找用户失败:"+ e.getMessage());
         }
@@ -91,7 +93,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public List<User> getAllUsers() {
         String sql = "select * from user";
-        List<User> users = null;
+        List<User> users = new ArrayList<User>();
         try(Connection conn = DruidDBConnection.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
