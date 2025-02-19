@@ -74,6 +74,7 @@ public class TransactionDAOImpl implements TransactionDAO {
                 transaction.setAmount(rs.getBigDecimal("amount"));
                 transaction.setSourceCard(rs.getString("source_card"));
                 transaction.setTargetCard(rs.getString("target_card"));
+                transaction.setTransactionDate(rs.getTimestamp("timestamp").toLocalDateTime());
                 transactions.add(transaction);
             }
             return transactions;

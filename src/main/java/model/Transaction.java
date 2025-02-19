@@ -80,6 +80,14 @@ public class Transaction {
     }
 
     public String toCsvString(){
-        return String.format("%s %s, %s, %.2f, %s, %s,%s", id,user_id, type, amount, sourceCard, targetCard, transactionDate);
+        return String.format("%d,%d,%s,%.2f,%s,%s,%s",
+                id,
+                user_id,
+                type,
+                amount,
+                sourceCard,
+                targetCard != null ? targetCard : "",
+                transactionDate != null ? transactionDate : ""
+        );
     }
 }

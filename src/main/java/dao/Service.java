@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Service {
-    public static boolean serviceDAO(Transaction transaction, String user_id) {
+    public static boolean serviceDAO(Transaction transaction, String card_number) {
         Connection conn = null;
         UserDAOImpl userDAO = new UserDAOImpl();
         TransactionDAOImpl transactionDAO = new TransactionDAOImpl();
@@ -23,7 +23,7 @@ public class Service {
             }
             //存款
             if(transaction.getType().equals("deposit")){
-                User user = userDAO.findUserById(user_id);
+                User user = userDAO.findUserById(card_number,conn);
                 user.setBalance(user.getBalance().add(transaction.getAmount()));
                 if(userDAO.updateBalance(user.getId_card(), user.getBalance(),conn)){
                     System.out.println("更新余额成功");
@@ -44,7 +44,7 @@ public class Service {
             }
             //取款
             if(transaction.getType().equals("withdraw")){
-                User user = userDAO.findUserById(user_id);
+                User user = userDAO.findUserById(card_number,conn);
                 user.setBalance(user.getBalance().subtract(transaction.getAmount()));
                 if(user.getBalance().compareTo(BigDecimal.ZERO)<0){
                     System.out.println("账户余额不足");
@@ -67,7 +67,7 @@ public class Service {
             }
             //转账
             if(transaction.getType().equals("transfer")){
-                User user = userDAO.findUserById(user_id);
+                User user = userDAO.findUserById(card_number,conn);
                 User target = userDAO.findUserById(transaction.getTargetCard());
 
                 target.setBalance(target.getBalance().add(transaction.getAmount()));

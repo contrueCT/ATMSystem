@@ -90,6 +90,28 @@ public class UserDAOImpl implements UserDAO {
         return null;
     }
 
+    public User findUserById(String card_id, Connection conn) {
+        String sql = "select * from user where card_number = ?";
+        User user = new User();
+        try(PreparedStatement pstmt = conn.prepareStatement(sql)){
+
+            pstmt.setString(1, card_id);
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            user.setId(rs.getInt("id"));
+            user.setId_card(rs.getString("id_card"));
+            user.setName(rs.getString("name"));
+            user.setPhone(rs.getString("phone"));
+            user.setCard_number(rs.getString("card_number"));
+            user.setPassword(rs.getString("password"));
+            user.setBalance(rs.getBigDecimal("balance"));
+            return user;
+        }catch(SQLException e){
+            System.out.println("查找用户失败:"+ e.getMessage());
+        }
+        return null;
+    }
+
     @Override
     public List<User> getAllUsers() {
         String sql = "select * from user";

@@ -86,7 +86,7 @@ public class ATMService {
         System.out.println("请输入要存款的金额：");
         BigDecimal money = InputValidator.isValidBigDecimal();
         Transaction deposit = new Transaction(user.getId(), "deposit", money, user.getCard_number(), user.getCard_number());
-        if(Service.serviceDAO(deposit,String.valueOf(user.getId()))){
+        if(Service.serviceDAO(deposit,String.valueOf(user.getCard_number()))){
             System.out.println("存款成功");
             return;
         }
@@ -102,7 +102,7 @@ public class ATMService {
         System.out.println("请输入要取款的金额：");
         BigDecimal money = InputValidator.isValidBigDecimal();
         Transaction withdraw = new Transaction(user.getId(), "withdraw", money, user.getCard_number(), user.getCard_number());
-        if(Service.serviceDAO(withdraw,String.valueOf(user.getId()))){
+        if(Service.serviceDAO(withdraw,String.valueOf(user.getCard_number()))){
             System.out.println("取款成功");
             return;
         }
@@ -120,7 +120,7 @@ public class ATMService {
         System.out.println("请输入要转账的目标账户卡号");
         String target = InputValidator.isValidCard_id();
         Transaction transfer = new Transaction(user.getId(), "transfer", money, user.getCard_number(), target);
-        if(Service.serviceDAO(transfer,String.valueOf(user.getId()))){
+        if(Service.serviceDAO(transfer,String.valueOf(user.getCard_number()))){
             System.out.println("转账成功");
             return;
         }
@@ -140,8 +140,8 @@ public class ATMService {
         }
         for(Transaction transaction : transactions){
             System.out.println("交易编号："+transaction.getId());
-            System.out.println("交易类型"+transaction.getType());
-            System.out.println("交易金额"+transaction.getAmount());
+            System.out.println("交易类型："+transaction.getType());
+            System.out.println("交易金额："+transaction.getAmount());
             if(transaction.getType().equals("transfer")){
                 System.out.println("交易内容：由卡号"+transaction.getSourceCard()+"向"+transaction.getTargetCard()+"转账");
             }
@@ -157,7 +157,7 @@ public class ATMService {
             String head = "id,user_id,type,amount,sourceCard,targetCard,transactionDate";
             try(FileOutputStream fos = new FileOutputStream(filePath);
                 BufferedOutputStream bos = new BufferedOutputStream(fos,8192)){
-                bos.write(head.getBytes(StandardCharsets.UTF_8));
+                bos.write((head+"\n").getBytes(StandardCharsets.UTF_8));
                 bos.write(content.getBytes(StandardCharsets.UTF_8));
             }catch (IOException e){
                 System.out.println("导出失败"+e.getMessage());

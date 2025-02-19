@@ -62,9 +62,8 @@ public class MainSystem {
             else if(choice1 == 0){
                 return;
             }
-            System.out.println("是否继续使用：");
-            int choice2 = InputValidator.isValidInt(1);
-            if(choice2 == 1){
+            System.out.println("是否继续使用(Y/N)：");
+            if(InputValidator.isValidYes()){
                 continue;
             }else{
                 break;
