@@ -3,9 +3,14 @@ package atmSystem;
 import model.User;
 import service.ATMService;
 import service.InputValidator;
+import util.DatabaseInitializer;
 
 public class MainSystem {
     public static void main(String[] args) {
+        if(!DatabaseInitializer.initializeDatabase()){
+            System.out.println("数据库初始化失败");
+            return;
+        }
         User user = null;
         System.out.println("欢迎使用ATM系统");
 
