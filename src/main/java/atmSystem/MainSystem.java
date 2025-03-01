@@ -1,8 +1,8 @@
 package atmSystem;
 
 import model.User;
-import service.ATMService;
-import service.InputValidator;
+import service.ServiceImpl.ATMServiceImpl;
+import util.InputValidator;
 import util.DatabaseInitializer;
 
 public class MainSystem {
@@ -12,7 +12,10 @@ public class MainSystem {
             return;
         }
         User user = null;
+        ATMServiceImpl atmService = new ATMServiceImpl();
+
         System.out.println("欢迎使用ATM系统");
+
 
         while (true) {
             System.out.println("-------------------------");
@@ -23,14 +26,14 @@ public class MainSystem {
             int choice = InputValidator.isValidInt(2);
             user = null;
             if (choice == 1) {
-                user = ATMService.login();
+                user = atmService.login();
                 if (user == null) {
                     continue;
                 }
                 break;
             }
             else if (choice == 2) {
-                user = ATMService.register();
+                user = atmService.register();
                 if (user == null) {
                     continue;
                 }
@@ -53,16 +56,16 @@ public class MainSystem {
             System.out.println("0.退出系统");
             int choice1 = InputValidator.isValidInt(4);
             if(choice1 == 1){
-                ATMService.deposit(user);
+                atmService.deposit(user);
             }
             else if(choice1 == 2){
-                ATMService.withdraw(user);
+                atmService.withdraw(user);
             }
             else if(choice1 == 3){
-                ATMService.transfer(user);
+                atmService.transfer(user);
             }
             else if(choice1 == 4){
-                ATMService.findTransaction(user);
+                atmService.findTransaction(user);
             }
             else if(choice1 == 0){
                 return;

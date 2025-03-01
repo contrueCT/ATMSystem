@@ -1,11 +1,14 @@
-package dao;
+package service.ServiceImpl;
 
+import dao.DAOImpl.TransactionDAOImpl;
+import dao.DAOImpl.UserDAOImpl;
 import model.Transaction;
 import model.User;
+import util.AccountLockManager;
+import util.DruidDBConnection;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Service {
@@ -13,6 +16,16 @@ public class Service {
         Connection conn = null;
         UserDAOImpl userDAO = new UserDAOImpl();
         TransactionDAOImpl transactionDAO = new TransactionDAOImpl();
+
+        //确定要锁定的账户
+        String[] cardToLock;
+        if(transaction.getType().equals("tranfer")){
+            cardToLock = new String[]{card_number,transaction.getTargetCard()};
+        }else{
+            cardToLock = new String[]{card_number};
+        }
+        //获得涉及账户的锁
+        AccountLockManager.acquireLocks(cardToLock);
 
         try{
             conn = DruidDBConnection.getConnection();
@@ -106,6 +119,7 @@ public class Service {
             return false;
         }finally{
             DruidDBConnection.closeConnection(conn);
+            AccountLockManager.releaseLocks(cardToLock);
         }
 
     }

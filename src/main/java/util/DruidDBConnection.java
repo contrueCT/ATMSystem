@@ -1,10 +1,8 @@
-package dao;
+package util;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 
 import javax.sql.DataSource;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -14,7 +12,7 @@ import java.util.Properties;
 
 public class DruidDBConnection {
     private DruidDBConnection() {}
-    private static DataSource dataSource;
+    private static volatile DataSource dataSource;
     //初始化连接池
     private static void initDataSource() {
         if (dataSource == null) {

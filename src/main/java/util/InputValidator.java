@@ -1,4 +1,4 @@
-package service;
+package util;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
