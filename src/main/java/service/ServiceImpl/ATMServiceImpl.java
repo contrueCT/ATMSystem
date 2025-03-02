@@ -1,6 +1,8 @@
 package service.ServiceImpl;
 
 import dao.DAOImpl.TransactionDAOImpl;
+import dao.TransactionDAO;
+import dao.UserDAO;
 import dao.DAOImpl.UserDAOImpl;
 import model.Transaction;
 import model.User;
@@ -16,23 +18,26 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * @author confff
+ */
 public class ATMServiceImpl implements ATMService {
     Scanner sc = new Scanner(System.in);
-    UserDAOImpl userDAO = new UserDAOImpl();
-    TransactionDAOImpl transactionDAO = new TransactionDAOImpl();
-
+    UserDAO userDAO = new UserDAOImpl();
+    TransactionDAO transactionDAO = new TransactionDAOImpl();
+    @Override
     public User register(){
         System.out.println("请输入姓名：");
         String name = sc.nextLine();
         System.out.println("请输入手机号：");
         String phone = sc.nextLine();
         System.out.println("请输入身份证号：");
-        String id_card = sc.nextLine();
+        String idCard = sc.nextLine();
         System.out.println("请输入银行卡号");
-        String card_number = sc.nextLine();
+        String cardNumber = sc.nextLine();
         System.out.println("请输入密码（6位数字）：");
         String password = sc.nextLine();
-        User user = new User(name, phone, id_card, card_number, password);
+        User user = new User(name, phone, idCard, cardNumber, password);
 
         if(!userDAO.addUser(user)){
             System.out.println("注册失败，请检查手机号、身份证号、银行卡号、密码是否有误");
@@ -41,15 +46,15 @@ public class ATMServiceImpl implements ATMService {
         System.out.println("注册成功，即将进入系统界面");
         return user;
     }
-
+    @Override
     public User login(){
         while (true) {
             System.out.println("请输入身份证号：");
-            String id_card = sc.nextLine();
+            String idCard = sc.nextLine();
             System.out.println("请输入密码：");
             String password = sc.nextLine();
 
-            User user = userDAO.findUserById(id_card);
+            User user = userDAO.findUserById(idCard);
             if(user == null){
                 System.out.println("未查找到该账户,是否继续登录(Y/N)");
                 String re = sc.nextLine();
@@ -75,7 +80,7 @@ public class ATMServiceImpl implements ATMService {
             }
         }
     }
-
+    @Override
     public void deposit(User user){
         System.out.println("请输入要存款的金额：");
         BigDecimal money = InputValidator.isValidBigDecimal();
@@ -87,7 +92,7 @@ public class ATMServiceImpl implements ATMService {
         System.out.println("存款失败");
 
     }
-
+    @Override
     public void withdraw(User user){
 
         System.out.println("请输入要取款的金额：");
@@ -100,7 +105,7 @@ public class ATMServiceImpl implements ATMService {
         System.out.println("取款失败");
 
     }
-
+    @Override
     public void transfer(User user){
 
         System.out.println("请输入要转账的金额：");
@@ -115,7 +120,7 @@ public class ATMServiceImpl implements ATMService {
         System.out.println("转账失败");
 
     }
-
+    @Override
     public void findTransaction(User user){
 
         List<Transaction> transactions = transactionDAO.findTransactionByCardID(user.getCard_number());
@@ -127,7 +132,7 @@ public class ATMServiceImpl implements ATMService {
             System.out.println("交易编号："+transaction.getId());
             System.out.println("交易类型："+transaction.getType());
             System.out.println("交易金额："+transaction.getAmount());
-            if(transaction.getType().equals("transfer")){
+            if("transfer".equals(transaction.getType())){
                 System.out.println("交易内容：由卡号"+transaction.getSourceCard()+"向"+transaction.getTargetCard()+"转账");
             }
             System.out.println("-------------------------------------------");

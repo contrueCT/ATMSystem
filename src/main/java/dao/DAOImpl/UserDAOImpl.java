@@ -39,13 +39,13 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public boolean updateBalance(String card_id, BigDecimal balance) {
+    public boolean updateBalance(String cardId, BigDecimal balance) {
         String sql = "update user set balance = ? where id_card = ?";
         try(Connection conn = DruidDBConnection.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
             pstmt.setBigDecimal(1, balance);
-            pstmt.setString(2, card_id);
+            pstmt.setString(2, cardId);
             pstmt.executeUpdate();
             return true;
         }catch (SQLException e){
@@ -69,13 +69,13 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User findUserById(String card_id) {
+    public User findUserById(String cardId) {
         String sql = "select * from user where id_card = ?";
         User user = new User();
         try(Connection conn = DruidDBConnection.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            pstmt.setString(1, card_id);
+            pstmt.setString(1, cardId);
             ResultSet rs = pstmt.executeQuery();
             rs.next();
             user.setId(rs.getInt("id"));
