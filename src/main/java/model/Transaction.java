@@ -3,17 +3,20 @@ package model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * @author confff
+ */
 public class Transaction {
     private Integer id;
-    private Integer user_id;
+    private Integer userId;
     private String type;
     private BigDecimal amount;
     private String sourceCard;
     private String targetCard;
     private LocalDateTime transactionDate;
 
-    public Transaction(Integer user_id, String type, BigDecimal amount, String sourceCard, String targetCard) {
-        this.user_id = user_id;
+    public Transaction(Integer userId, String type, BigDecimal amount, String sourceCard, String targetCard) {
+        this.userId = userId;
         this.type = type;
         this.amount = amount;
         this.sourceCard = sourceCard;
@@ -31,12 +34,12 @@ public class Transaction {
         return id;
     }
 
-    public Integer getUser_id() {
-        return user_id;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public String getType() {
@@ -82,7 +85,7 @@ public class Transaction {
     public String toCsvString(){
         return String.format("%d,%d,%s,%.2f,%s,%s,%s",
                 id,
-                user_id,
+                userId,
                 type,
                 amount,
                 sourceCard,

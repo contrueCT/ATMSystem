@@ -10,6 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * @author confff
+ */
 public class DruidDBConnection {
     private DruidDBConnection() {}
     private static volatile DataSource dataSource;

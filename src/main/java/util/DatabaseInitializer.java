@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * @author confff
+ */
 public class DatabaseInitializer {
     public static boolean initializeDatabase() {
         try(Connection conn = DruidDBConnection.getConnection();

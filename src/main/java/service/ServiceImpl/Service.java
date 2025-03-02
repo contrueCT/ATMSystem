@@ -11,18 +11,21 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * @author confff
+ */
 public class Service {
-    public static boolean serviceDAO(Transaction transaction, String card_number) {
+    public static boolean serviceDAO(Transaction transaction, String cardNumber) {
         Connection conn = null;
         UserDAOImpl userDAO = new UserDAOImpl();
         TransactionDAOImpl transactionDAO = new TransactionDAOImpl();
 
         //确定要锁定的账户
         String[] cardToLock;
-        if(transaction.getType().equals("tranfer")){
-            cardToLock = new String[]{card_number,transaction.getTargetCard()};
+        if("transfer".equals(transaction.getType())){
+            cardToLock = new String[]{cardNumber,transaction.getTargetCard()};
         }else{
-            cardToLock = new String[]{card_number};
+            cardToLock = new String[]{cardNumber};
         }
         //获得涉及账户的锁
         AccountLockManager.acquireLocks(cardToLock);
@@ -35,8 +38,8 @@ public class Service {
                 return false;
             }
             //存款
-            if(transaction.getType().equals("deposit")){
-                User user = userDAO.findUserById(card_number,conn);
+            if("deposit".equals(transaction.getType())){
+                User user = userDAO.findUserById(cardNumber,conn);
                 user.setBalance(user.getBalance().add(transaction.getAmount()));
                 if(userDAO.updateBalance(user.getId_card(), user.getBalance(),conn)){
                     System.out.println("更新余额成功");
@@ -56,8 +59,8 @@ public class Service {
                 return true;
             }
             //取款
-            if(transaction.getType().equals("withdraw")){
-                User user = userDAO.findUserById(card_number,conn);
+            if("withdraw".equals(transaction.getType())){
+                User user = userDAO.findUserById(cardNumber,conn);
                 user.setBalance(user.getBalance().subtract(transaction.getAmount()));
                 if(user.getBalance().compareTo(BigDecimal.ZERO)<0){
                     System.out.println("账户余额不足");
@@ -79,8 +82,8 @@ public class Service {
                 return true;
             }
             //转账
-            if(transaction.getType().equals("transfer")){
-                User user = userDAO.findUserById(card_number,conn);
+            if("transfer".equals(transaction.getType())){
+                User user = userDAO.findUserById(cardNumber,conn);
                 User target = userDAO.findUserById(transaction.getTargetCard());
 
                 target.setBalance(target.getBalance().add(transaction.getAmount()));

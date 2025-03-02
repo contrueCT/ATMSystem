@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author confff
+ */
 public class TransactionDAOImpl implements TransactionDAO {
     @Override
     public boolean addTransaction(Transaction transaction) {
@@ -22,7 +25,7 @@ public class TransactionDAOImpl implements TransactionDAO {
         try(Connection conn = DruidDBConnection.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            pstmt.setInt(1, transaction.getUser_id());
+            pstmt.setInt(1, transaction.getUserId());
             pstmt.setString(2, transaction.getType());
             pstmt.setBigDecimal(3, transaction.getAmount());
             pstmt.setString(4, transaction.getSourceCard());
@@ -43,7 +46,7 @@ public class TransactionDAOImpl implements TransactionDAO {
         String sql = "insert into transactions (user_id, type, amount, source_card, target_card) value (?,?,?,?,?)";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            pstmt.setInt(1, transaction.getUser_id());
+            pstmt.setInt(1, transaction.getUserId());
             pstmt.setString(2, transaction.getType());
             pstmt.setBigDecimal(3, transaction.getAmount());
             pstmt.setString(4, transaction.getSourceCard());
@@ -58,20 +61,20 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public List<Transaction> findTransactionByCardID(String card_id) {
+    public List<Transaction> findTransactionByCardID(String cardId) {
         String sql = "select * from transactions where source_card = ?";
-        List<Transaction> transactions = new ArrayList<Transaction>();
+        List<Transaction> transactions = new ArrayList<>();
 
         try(Connection conn = DruidDBConnection.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
-            pstmt.setString(1, card_id);
+            pstmt.setString(1, cardId);
             ResultSet rs = pstmt.executeQuery();
             Transaction transaction = null;
             while(rs.next()){
                 transaction = new Transaction();
                 transaction.setId(rs.getInt("id"));
-                transaction.setUser_id(rs.getInt("user_id"));
+                transaction.setUserId(rs.getInt("user_id"));
                 transaction.setType(rs.getString("type"));
                 transaction.setAmount(rs.getBigDecimal("amount"));
                 transaction.setSourceCard(rs.getString("source_card"));

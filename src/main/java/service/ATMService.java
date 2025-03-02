@@ -2,6 +2,9 @@ package service;
 
 import model.User;
 
+/**
+ * @author confff
+ */
 public interface ATMService {
     public User register();
 

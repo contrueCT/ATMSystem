@@ -3,11 +3,15 @@ package util;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
+/**
+ * @author confff
+ */
 public class InputValidator {
+    static Scanner sc = new Scanner(System.in);
+
     public static boolean isValidYes() {
         while(true){
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
+            String input = sc.nextLine();
             if(input.length() != 1){
                 System.out.println("请输入Y/N");
                 continue;
@@ -16,16 +20,11 @@ public class InputValidator {
                 System.out.println("请输入Y/N");
                 continue;
             }
-            if(input.charAt(0)=='Y'){
-                return true;
-            }else{
-                return false;
-            }
+            return input.charAt(0) == 'Y';
         }
     }
 
     public static BigDecimal isValidBigDecimal() {
-        Scanner sc = new Scanner(System.in);
 
         while (true) {
             try {
@@ -47,8 +46,7 @@ public class InputValidator {
         }
     }
 
-    public static String isValidCard_id() {
-        Scanner sc = new Scanner(System.in);
+    public static String isValidCardId() {
         while (true) {
             String input = sc.nextLine().trim().replace(",", "");
             if(input.isEmpty()){
@@ -65,7 +63,6 @@ public class InputValidator {
     }
 
     public static int isValidInt(int max){
-        Scanner sc = new Scanner(System.in);
         while (true) {
             String input = sc.nextLine().trim().replace(",", "");
             if(input.length()!=1){

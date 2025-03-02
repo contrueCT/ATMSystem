@@ -106,7 +106,7 @@ public class ATMServiceImpl implements ATMService {
         System.out.println("请输入要转账的金额：");
         BigDecimal money = InputValidator.isValidBigDecimal();
         System.out.println("请输入要转账的目标账户卡号");
-        String target = InputValidator.isValidCard_id();
+        String target = InputValidator.isValidCardId();
         Transaction transfer = new Transaction(user.getId(), "transfer", money, user.getCard_number(), target);
         if(Service.serviceDAO(transfer,String.valueOf(user.getCard_number()))){
             System.out.println("转账成功");

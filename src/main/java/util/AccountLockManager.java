@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * @author confff
+ */
 public class AccountLockManager {
-    private static final ConcurrentHashMap<String, ReentrantLock> accountLocks = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, ReentrantLock> ACCOUNT_LOCKS = new ConcurrentHashMap<>();
 
 
     public static ReentrantLock getAccountLock(String account) {
-        return accountLocks.computeIfAbsent(account, k -> new ReentrantLock());
+        return ACCOUNT_LOCKS.computeIfAbsent(account, k -> new ReentrantLock());
 
     }
 
