@@ -4,10 +4,12 @@ import dao.TransactionDAO;
 import model.Transaction;
 import util.DruidDBConnection;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,16 +72,16 @@ public class TransactionDAOImpl implements TransactionDAO {
 
             pstmt.setString(1, cardId);
             ResultSet rs = pstmt.executeQuery();
-            Transaction transaction = null;
+
             while(rs.next()){
-                transaction = new Transaction();
-                transaction.setId(rs.getInt("id"));
-                transaction.setUserId(rs.getInt("user_id"));
-                transaction.setType(rs.getString("type"));
-                transaction.setAmount(rs.getBigDecimal("amount"));
-                transaction.setSourceCard(rs.getString("source_card"));
-                transaction.setTargetCard(rs.getString("target_card"));
-                transaction.setTransactionDate(rs.getTimestamp("timestamp").toLocalDateTime());
+                int id= rs.getInt("id");
+                int userId = rs.getInt("user_id");
+                String type = rs.getString("type");
+                BigDecimal amount = rs.getBigDecimal("amount");
+                String sourceCard = rs.getString("source_card");
+                String targetCard = rs.getString("target_card");
+                LocalDateTime time = rs.getTimestamp("timestamp").toLocalDateTime();
+                Transaction transaction = new Transaction(id,userId,type,amount,sourceCard,targetCard,time);
                 transactions.add(transaction);
             }
             return transactions;
