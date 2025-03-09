@@ -2,7 +2,6 @@ package controller;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,13 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import service.ATMService;
 import service.ServiceImpl.ATMServiceImpl;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.math.BigDecimal;
-
+import util.MyJsonReader;
 import static util.AccountsChoice.choice.*;
+
+import java.io.IOException;
+import java.math.BigDecimal;
 
 /**
  * @author confff
@@ -26,7 +23,7 @@ import static util.AccountsChoice.choice.*;
 @WebServlet("/accounts/*")
 public class AccountServlet extends HttpServlet {
     ATMService atmService = new ATMServiceImpl();
-
+    MyJsonReader myJsonReader = new MyJsonReader();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getPathInfo();
@@ -67,16 +64,7 @@ public class AccountServlet extends HttpServlet {
     }
 
     private void deposit(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-        }
-        String jsonData = buffer.toString();
-
-        JsonReader jsonReader = Json.createReader(new StringReader(jsonData));
-        JsonObject jsonObject = jsonReader.readObject();
+        JsonObject jsonObject = myJsonReader.getJsonObject(request);
 
         String cardId = jsonObject.getString("cardId", "");
         BigDecimal amount = jsonObject.getJsonNumber("amount").bigDecimalValue();
@@ -94,16 +82,7 @@ public class AccountServlet extends HttpServlet {
     }
 
     private void withdraw(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-        }
-        String jsonData = buffer.toString();
-
-        JsonReader jsonReader = Json.createReader(new StringReader(jsonData));
-        JsonObject jsonObject = jsonReader.readObject();
+        JsonObject jsonObject = myJsonReader.getJsonObject(request);
 
         BigDecimal amount = jsonObject.getJsonNumber("amount").bigDecimalValue();
         String cardId = jsonObject.getString("cardId", "");
@@ -122,16 +101,7 @@ public class AccountServlet extends HttpServlet {
     }
 
     private void transfer(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-        }
-        String jsonData = buffer.toString();
-
-        JsonReader jsonReader = Json.createReader(new StringReader(jsonData));
-        JsonObject jsonObject = jsonReader.readObject();
+        JsonObject jsonObject = myJsonReader.getJsonObject(request);
 
         BigDecimal amount = jsonObject.getJsonNumber("amount").bigDecimalValue();
         String cardId = jsonObject.getString("cardId", "");
@@ -151,16 +121,7 @@ public class AccountServlet extends HttpServlet {
     }
 
     public void checkBalance(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-        }
-        String jsonData = buffer.toString();
-
-        JsonReader jsonReader = Json.createReader(new StringReader(jsonData));
-        JsonObject jsonObject = jsonReader.readObject();
+        JsonObject jsonObject = myJsonReader.getJsonObject(request);
 
         String cardId = jsonObject.getString("cardId", "");
 
