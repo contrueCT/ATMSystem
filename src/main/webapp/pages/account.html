@@ -302,7 +302,9 @@
                 try {
                     const response = JSON.parse(xhr.responseText);
                     if (response.balance !== undefined) {
-                        balanceAmount.value = response.balance.toFixed(2); // 显示余额，保留两位小数
+                        // 显示余额，保留两位小数
+                        balanceAmount.value = parseFloat(response.balance).toFixed(2);
+                        console.log(response.massage);
                     } else {
                         showMessage('无法获取余额信息', 'error');
                     }

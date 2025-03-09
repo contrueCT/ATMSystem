@@ -224,4 +224,13 @@ public class ATMServiceImpl implements ATMService {
     public void showBalance(User user){
         System.out.println(user.getBalance());
     }
+
+    @Override
+    public BigDecimal checkBalance(String cardId){
+        User user = userDAO.findUserById(cardId);
+        if(user==null){
+            return null;
+        }
+        return user.getBalance();
+    }
 }

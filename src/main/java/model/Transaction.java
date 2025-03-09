@@ -80,4 +80,17 @@ public class Transaction {
                 transactionDate != null ? transactionDate : ""
         );
     }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", type='" + type + '\'' +
+                ", amount=" + amount +
+                ", sourceCard='" + sourceCard + '\'' +
+                ", targetCard='" + targetCard + '\'' +
+                ", transactionDate=" + transactionDate +
+                '}';
+    }
 }

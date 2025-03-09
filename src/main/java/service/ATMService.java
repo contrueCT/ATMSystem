@@ -79,4 +79,5 @@ public interface ATMService {
 
     public void showBalance(User user);
 
+    public BigDecimal checkBalance(String cardId);
 }

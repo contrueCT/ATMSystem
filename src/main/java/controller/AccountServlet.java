@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
 
+import static util.AccountsChoice.choice.*;
+
 /**
  * @author confff
  */
@@ -43,15 +45,17 @@ public class AccountServlet extends HttpServlet {
 
         try{
             switch (path.split("/")[path.split("/").length - 1]){
-                case "deposit":
+                case DEPOSIT:
                     deposit(request,response);
                     break;
-                case "withdraw":
+                case WITHDRAW:
                     withdraw(request,response);
                     break;
-                case "transfer":
+                case TRANSFER:
                     transfer(request,response);
                     break;
+                case CHECK_BALANCE:
+                    checkBalance(request,response);
                 default:
                     break;
             }
@@ -146,7 +150,7 @@ public class AccountServlet extends HttpServlet {
         }
     }
 
-    public void showBalance(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public void checkBalance(HttpServletRequest request, HttpServletResponse response) throws Exception {
         StringBuilder buffer = new StringBuilder();
         BufferedReader reader = request.getReader();
         String line;
@@ -160,7 +164,25 @@ public class AccountServlet extends HttpServlet {
 
         String cardId = jsonObject.getString("cardId", "");
 
+        BigDecimal balance = atmService.checkBalance(cardId);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
+        JsonObject jsonResponse;
+        if(balance!=null){
+            jsonResponse = Json.createObjectBuilder()
+                    .add("message", "check balance successful")
+                    .add("balance", balance.toString())
+                    .build();
+            response.setStatus(HttpServletResponse.SC_OK);
+        }
+        else{
+            jsonResponse = Json.createObjectBuilder()
+                    .add("message", "check balance failed")
+                    .build();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+        response.getWriter().write(jsonResponse.toString());
     }
 
 }
