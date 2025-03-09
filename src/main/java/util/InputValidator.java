@@ -46,6 +46,15 @@ public class InputValidator {
         }
     }
 
+    public static boolean isValidBigDecimal(BigDecimal money) {
+        if(money!=null&&money.compareTo(BigDecimal.ZERO)>0){
+            return true;
+        }
+        return false;
+    }
+
+
+
     public static String isValidCardId() {
         while (true) {
             String input = sc.nextLine().trim().replace(",", "");

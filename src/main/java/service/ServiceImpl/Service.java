@@ -41,7 +41,7 @@ public class Service {
             if("deposit".equals(transaction.getType())){
                 User user = userDAO.findUserById(cardNumber,conn);
                 user.setBalance(user.getBalance().add(transaction.getAmount()));
-                if(userDAO.updateBalance(user.getId_card(), user.getBalance(),conn)){
+                if(userDAO.updateBalance(user.getCardId(), user.getBalance(),conn)){
                     System.out.println("更新余额成功");
                 }
                 else{
@@ -66,7 +66,7 @@ public class Service {
                     System.out.println("账户余额不足");
                     return false;
                 }
-                if(userDAO.updateBalance(user.getId_card(), user.getBalance(),conn)){
+                if(userDAO.updateBalance(user.getCardId(), user.getBalance(),conn)){
                     System.out.println("余额更新成功");
                 }
                 else{
@@ -91,7 +91,7 @@ public class Service {
                 if(user.getBalance().compareTo(BigDecimal.ZERO)<0){
                     System.out.println("账户余额不足");
                 }
-                if(userDAO.updateBalance(user.getId_card(), user.getBalance(),conn)
+                if(userDAO.updateBalance(user.getCardId(), user.getBalance(),conn)
                         && userDAO.updateBalance(transaction.getTargetCard(), target.getBalance(),conn)){
                     System.out.println("余额更新成功");
                 }

@@ -13,7 +13,6 @@ public class AccountLockManager {
 
     public static ReentrantLock getAccountLock(String account) {
         return ACCOUNT_LOCKS.computeIfAbsent(account, k -> new ReentrantLock());
-
     }
 
     public static void acquireLocks(String... cardNumbers) {

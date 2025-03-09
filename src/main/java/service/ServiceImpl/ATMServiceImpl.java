@@ -84,8 +84,8 @@ public class ATMServiceImpl implements ATMService {
     public void deposit(User user){
         System.out.println("请输入要存款的金额：");
         BigDecimal money = InputValidator.isValidBigDecimal();
-        Transaction deposit = new Transaction(user.getId(), "deposit", money, user.getCard_number(), user.getCard_number());
-        if(Service.serviceDAO(deposit,String.valueOf(user.getCard_number()))){
+        Transaction deposit = new Transaction(user.getId(), "deposit", money, user.getCardId(), user.getCardId());
+        if(Service.serviceDAO(deposit,String.valueOf(user.getCardId()))){
             System.out.println("存款成功");
             return;
         }
@@ -93,18 +93,44 @@ public class ATMServiceImpl implements ATMService {
 
     }
     @Override
+    public Boolean deposit(String cardId,BigDecimal money){
+        if(!InputValidator.isValidBigDecimal(money)){
+            return false;
+        }
+        User user = userDAO.findUserById(cardId);
+        Transaction deposit = new Transaction(user.getId(), "deposit", money, user.getCardId(), user.getCardId());
+        if(Service.serviceDAO(deposit,String.valueOf(user.getCardId()))){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void withdraw(User user){
 
         System.out.println("请输入要取款的金额：");
         BigDecimal money = InputValidator.isValidBigDecimal();
-        Transaction withdraw = new Transaction(user.getId(), "withdraw", money, user.getCard_number(), user.getCard_number());
-        if(Service.serviceDAO(withdraw,String.valueOf(user.getCard_number()))){
+        Transaction withdraw = new Transaction(user.getId(), "withdraw", money, user.getCardId(), user.getCardId());
+        if(Service.serviceDAO(withdraw,String.valueOf(user.getCardId()))){
             System.out.println("取款成功");
             return;
         }
         System.out.println("取款失败");
-
     }
+
+    @Override
+    public Boolean withdraw(String cardId,BigDecimal money){
+        if(!InputValidator.isValidBigDecimal(money)){
+            return false;
+        }
+        User user = userDAO.findUserById(cardId);
+        Transaction withdraw = new Transaction(user.getId(), "withdraw", money, user.getCardId(), user.getCardId());
+        if(Service.serviceDAO(withdraw,String.valueOf(user.getCardId()))){
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void transfer(User user){
 
@@ -112,18 +138,35 @@ public class ATMServiceImpl implements ATMService {
         BigDecimal money = InputValidator.isValidBigDecimal();
         System.out.println("请输入要转账的目标账户卡号");
         String target = InputValidator.isValidCardId();
-        Transaction transfer = new Transaction(user.getId(), "transfer", money, user.getCard_number(), target);
-        if(Service.serviceDAO(transfer,String.valueOf(user.getCard_number()))){
+        Transaction transfer = new Transaction(user.getId(), "transfer", money, user.getCardId(), target);
+        if(Service.serviceDAO(transfer,String.valueOf(user.getCardId()))){
             System.out.println("转账成功");
             return;
         }
         System.out.println("转账失败");
 
     }
+
+    @Override
+    public Boolean transfer(String cardId,BigDecimal money,String target){
+        if(!InputValidator.isValidBigDecimal(money)){
+            return false;
+        }
+        User user = userDAO.findUserById(cardId);
+        if(userDAO.findUserById(cardId)==null){
+            return false;
+        }
+        Transaction transfer = new Transaction(user.getId(), "transfer", money, user.getCardId(), target);
+        if(Service.serviceDAO(transfer,String.valueOf(user.getCardId()))){
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public void findTransaction(User user){
 
-        List<Transaction> transactions = transactionDAO.findTransactionByCardID(user.getCard_number());
+        List<Transaction> transactions = transactionDAO.findTransactionByCardID(user.getCardId());
         if(transactions.isEmpty()){
             System.out.println("暂无交易记录");
             return;
@@ -157,5 +200,28 @@ public class ATMServiceImpl implements ATMService {
         }
 
 
+    }
+
+    @Override
+    public Boolean login(String cardId,String password){
+        User user = userDAO.findUserById(cardId);
+        return user != null && password.equals(user.getPassword());
+    }
+
+    @Override
+    public Boolean register(String name,String phone,String idCard,String cardId,String password){
+        User user = new User(name,phone,idCard,cardId,password);
+        return userDAO.addUser(user);
+    }
+
+    @Override
+    public BigDecimal getBalance(String cardId){
+        User user = userDAO.findUserById(cardId);
+        return user.getBalance();
+    }
+
+    @Override
+    public void showBalance(User user){
+        System.out.println(user.getBalance());
     }
 }

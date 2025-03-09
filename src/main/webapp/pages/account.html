@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM系统 - 账户功能</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .welcome-text {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .business-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .business-form {
+            margin: 20px 0;
+        }
+        button {
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 12px 24px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .form-actions button {
+            width: 48%;
+        }
+        .logout-btn {
+            background-color: #e74c3c;
+            margin-top: 20px;
+        }
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        .hidden {
+            display: none;
+        }
+        .message {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>ATM系统</h1>
+    <!-- 显示当前用户 -->
+    <p class="welcome-text">欢迎, <span id="userCardId"></span></p>
+    <!-- 消息框 -->
+    <div id="messageBox" class="message hidden"></div>
+    <!-- 业务选择界面 -->
+    <div id="businessOptions" class="business-options">
+        <button id="depositBtn">存款</button>
+        <button id="withdrawBtn">取款</button>
+        <button id="transferBtn">转账</button>
+        <button id="balanceBtn">显示余额</button>
+    </div>
+    <!-- 存款表单 -->
+    <form id="depositForm" class="business-form hidden">
+        <h2>存款</h2>
+        <div class="form-group">
+            <label for="depositAmount">存款金额:</label>
+            <input type="number" id="depositAmount" min="1" step="0.01" required>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="cancel-btn">取消</button>
+            <button type="submit">确认存款</button>
+        </div>
+    </form>
+    <!-- 取款表单 -->
+    <form id="withdrawForm" class="business-form hidden">
+        <h2>取款</h2>
+        <div class="form-group">
+            <label for="withdrawAmount">取款金额:</label>
+            <input type="number" id="withdrawAmount" min="1" step="0.01" required>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="cancel-btn">取消</button>
+            <button type="submit">确认取款</button>
+        </div>
+    </form>
+    <!-- 转账表单 -->
+    <form id="transferForm" class="business-form hidden">
+        <h2>转账</h2>
+        <div class="form-group">
+            <label for="targetCardId">收款人卡号:</label>
+            <input type="text" id="targetCardId" required>
+        </div>
+        <div class="form-group">
+            <label for="transferAmount">转账金额:</label>
+            <input type="number" id="transferAmount" min="1" step="0.01" required>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="cancel-btn">取消</button>
+            <button type="submit">确认转账</button>
+        </div>
+    </form>
+    <!-- 显示余额表单 -->
+    <form id="balanceForm" class="business-form hidden">
+        <h2>账户余额</h2>
+        <div class="form-group">
+            <label for="balanceAmount">当前余额:</label>
+            <input type="text" id="balanceAmount" readonly>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="cancel-btn">取消</button>
+        </div>
+    </form>
+    <!-- 退出登录按钮 -->
+    <button id="logoutBtn" class="logout-btn">退出登录</button>
+</div>
+<script>
+    // 获取当前用户卡号（从URL参数中获取）
+    function getCardIdFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('cardId') || '未知用户';
+    }
+    // 显示当前用户卡号
+    document.getElementById('userCardId').textContent = getCardIdFromUrl();
+    // 获取DOM元素
+    const businessOptions = document.getElementById('businessOptions');
+    const depositForm = document.getElementById('depositForm');
+    const withdrawForm = document.getElementById('withdrawForm');
+    const transferForm = document.getElementById('transferForm');
+    const balanceForm = document.getElementById('balanceForm');
+    const balanceAmount = document.getElementById('balanceAmount');
+    const messageBox = document.getElementById('messageBox');
+    const logoutBtn = document.getElementById('logoutBtn');
+    // 业务按钮点击事件
+    document.getElementById('depositBtn').addEventListener('click', function() {
+        showForm(depositForm);
+    });
+    document.getElementById('withdrawBtn').addEventListener('click', function() {
+        showForm(withdrawForm);
+    });
+    document.getElementById('transferBtn').addEventListener('click', function() {
+        showForm(transferForm);
+    });
+    document.getElementById('balanceBtn').addEventListener('click', function() {
+        showForm(balanceForm);
+        fetchBalance();
+    });
+    // 取消按钮点击事件
+    document.querySelectorAll('.cancel-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            hideAllForms();
+            showBusinessOptions();
+        });
+    });
+    // 存款表单提交
+    depositForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const amount = document.getElementById('depositAmount').value;
+        const cardId = getCardIdFromUrl();
+        // 创建AJAX请求
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ATMSystem_war_exploded/accounts/deposit', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // 设置响应处理函数
+        xhr.onload = function() {
+            handleResponse(xhr);
+        };
+        xhr.onerror = function() {
+            showMessage('网络错误，请检查网络连接', 'error');
+        };
+        // 发送数据
+        const data = {
+            cardId: cardId,
+            amount: parseFloat(amount)
+        };
+        xhr.send(JSON.stringify(data));
+        depositForm.reset();
+    });
+    // 取款表单提交
+    withdrawForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const amount = document.getElementById('withdrawAmount').value;
+        const cardId = getCardIdFromUrl();
+        // 创建AJAX请求
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ATMSystem_war_exploded/accounts/withdraw', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // 设置响应处理函数
+        xhr.onload = function() {
+            handleResponse(xhr);
+        };
+        xhr.onerror = function() {
+            showMessage('网络错误，请检查网络连接', 'error');
+        };
+        // 发送数据
+        const data = {
+            cardId: cardId,
+            amount: parseFloat(amount)
+        };
+        xhr.send(JSON.stringify(data));
+        withdrawForm.reset();
+    });
+    // 转账表单提交
+    transferForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const targetCardId = document.getElementById('targetCardId').value;
+        const amount = document.getElementById('transferAmount').value;
+        const senderCardId = getCardIdFromUrl();
+        // 创建AJAX请求
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ATMSystem_war_exploded/accounts/transfer', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // 设置响应处理函数
+        xhr.onload = function() {
+            handleResponse(xhr);
+        };
+        xhr.onerror = function() {
+            showMessage('网络错误，请检查网络连接', 'error');
+        };
+        // 发送数据
+        const data = {
+            cardId: senderCardId,
+            targetCardId: targetCardId,
+            amount: parseFloat(amount)
+        };
+        xhr.send(JSON.stringify(data));
+        transferForm.reset();
+    });
+    // 查询余额
+    function fetchBalance() {
+        const cardId = getCardIdFromUrl();
+        // 创建AJAX请求
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ATMSystem_war_exploded/accounts/showBalance', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        // 设置响应处理函数
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 400) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.balance !== undefined) {
+                        balanceAmount.value = response.balance.toFixed(2); // 显示余额，保留两位小数
+                    } else {
+                        showMessage('无法获取余额信息', 'error');
+                    }
+                } catch (e) {
+                    showMessage('解析余额信息失败', 'error');
+                }
+            } else {
+                showMessage('查询余额失败', 'error');
+            }
+        };
+        xhr.onerror = function() {
+            showMessage('网络错误，请检查网络连接', 'error');
+        };
+        // 发送数据
+        const data = {
+            cardId: cardId
+        };
+        xhr.send(JSON.stringify(data));
+    }
+    // 退出登录
+    logoutBtn.addEventListener('click', function() {
+        // 创建AJAX请求
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/ATMSystem_war_exploded/welcome/page', true);
+        xhr.onload = function() {
+            if(xhr.status >= 200 && xhr.status < 400){
+                try {
+                    // 尝试解析JSON
+                    const response = JSON.parse(xhr.responseText);
+                    if(response.redirect){
+                        window.location.href = response.redirect;
+                    } else {
+                        window.location.href = '/ATMSystem_war_exploded/welcome/page';
+                    }
+                } catch (e) {
+                    // 解析失败，说明不是JSON，直接重定向
+                    console.log("返回内容不是JSON，直接重定向");
+                    window.location.href = '/ATMSystem_war_exploded/welcome/page';
+                }
+            } else {
+                showMessage('退出登录失败', 'error');
+            }
+        };
+        xhr.onerror = function() {
+            showMessage('退出登录失败', 'error');
+        };
+        xhr.send();
+    });
+    // 处理响应
+    function handleResponse(xhr) {
+        try {
+            if (xhr.status >= 200 && xhr.status < 400) {
+                const response = JSON.parse(xhr.responseText);
+                showMessage(response.massage || '操作成功', 'success');
+                // 显示业务选择界面
+                setTimeout(function() {
+                    hideAllForms();
+                    showBusinessOptions();
+                }, 1500);
+            } else {
+                const response = JSON.parse(xhr.responseText);
+                showMessage(response.massage || '操作失败', 'error');
+            }
+        } catch (e) {
+            showMessage('操作过程中出现错误', 'error');
+        }
+    }
+    // 显示指定的表单
+    function showForm(form) {
+        hideAllForms();
+        businessOptions.classList.add('hidden');
+        form.classList.remove('hidden');
+    }
+    // 隐藏所有表单
+    function hideAllForms() {
+        depositForm.classList.add('hidden');
+        withdrawForm.classList.add('hidden');
+        transferForm.classList.add('hidden');
+        balanceForm.classList.add('hidden');
+        messageBox.classList.add('hidden');
+    }
+    // 显示业务选择界面
+    function showBusinessOptions() {
+        businessOptions.classList.remove('hidden');
+    }
+    // 显示消息
+    function showMessage(message, type) {
+        messageBox.textContent = message;
+        messageBox.className = 'message ' + type;
+        messageBox.classList.remove('hidden');
+    }
+</script>
+</body>
+</html>

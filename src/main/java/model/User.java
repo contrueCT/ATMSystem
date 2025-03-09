@@ -2,23 +2,29 @@ package model;
 
 import java.math.BigDecimal;
 
+/**
+ * @author confff
+ */
 public class User {
     private Integer id;
     private String name;
     private String phone;
-    private String id_card;
-    private String card_number;
+    //身份证
+    private String idCard;
+    //卡号
+    private String cardId;
+
     private BigDecimal balance;
     private String password;
 
     public User() {
     }
 
-    public User(String name, String phone, String id_card, String card_number, String password) {
+    public User(String name, String phone, String idCard, String cardId, String password) {
         this.name = name;
         this.phone = phone;
-        this.id_card = id_card;
-        this.card_number = card_number;
+        this.idCard = idCard;
+        this.cardId = cardId;
         this.password = password;
     }
 
@@ -46,20 +52,20 @@ public class User {
         this.phone = phone;
     }
 
-    public String getId_card() {
-        return id_card;
+    public String getIdCard() {
+        return idCard;
     }
 
-    public void setId_card(String id_card) {
-        this.id_card = id_card;
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
     }
 
-    public String getCard_number() {
-        return card_number;
+    public String getCardId() {
+        return cardId;
     }
 
-    public void setCard_number(String card_number) {
-        this.card_number = card_number;
+    public void setCardId(String cardId) {
+        this.cardId = cardId;
     }
 
     public BigDecimal getBalance() {

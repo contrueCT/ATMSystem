@@ -4,6 +4,11 @@ import model.User;
 import service.ServiceImpl.ATMServiceImpl;
 import util.InputValidator;
 import util.DatabaseInitializer;
+import util.Menu;
+
+import static util.Menu.MenuOptionOne.*;
+import static util.Menu.MenuOptionTwo.*;
+import static util.Menu.MenuOptionTwo.CLOSE;
 
 /**
  * @author confff
@@ -29,19 +34,19 @@ public class MainSystem {
             int choice = InputValidator.isValidInt(2);
             user = null;
             switch (choice) {
-                case 1:
+                case LOGIN:
                     user = atmService.login();
                     if (user == null) {
                         continue; // 如果登录失败，跳过当前循环
                     }
                     break;
-                case 2:
+                case REGISTER:
                     user = atmService.register();
                     if (user == null) {
                         continue; // 如果注册失败，跳过当前循环
                     }
                     break;
-                case 0:
+                case CLOSE:
                     return; // 直接退出当前方法
                 default:
                     System.out.println("获取账户失败");
@@ -56,22 +61,25 @@ public class MainSystem {
             System.out.println("2.取款");
             System.out.println("3.转账");
             System.out.println("4.查询交易记录");
+            System.out.println("5.查看账户余额");
             System.out.println("0.退出系统");
             int choice1 = InputValidator.isValidInt(4);
             switch (choice1) {
-                case 1:
+                case DEPOSIT:
                     atmService.deposit(user);
                     break;
-                case 2:
+                case WITHDRAW:
                     atmService.withdraw(user);
                     break;
-                case 3:
+                case TRANSFER:
                     atmService.transfer(user);
                     break;
-                case 4:
+                case SHOW_TRANSACTION:
                     atmService.findTransaction(user);
                     break;
-                case 0:
+                case SHOW_BALANCE:
+                    atmService.showBalance(user);
+                case CLOSE:
                     return; // 直接退出当前方法
             }
             System.out.println("是否继续使用(Y/N)：");

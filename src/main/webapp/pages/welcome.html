@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM系统</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 12px 24px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-note {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>ATM系统</h1>
+
+    <div class="buttons">
+        <button id="showLoginBtn">登录</button>
+        <button id="showRegisterBtn">注册</button>
+    </div>
+
+    <div id="messageBox" class="message hidden"></div>
+
+    <!-- 登录表单 -->
+    <form id="loginForm" class="hidden">
+        <h2>账户登录</h2>
+        <div class="form-group">
+            <label for="loginCardID">银行卡号:</label>
+            <input type="text" id="loginCardId" required>
+        </div>
+
+        <div class="form-group">
+            <label for="loginPassword">密码:</label>
+            <input type="password" id="loginPassword" required>
+            <div class="form-note">请输入六位纯数字密码</div>
+        </div>
+
+        <button type="submit">登录</button>
+    </form>
+
+    <!-- 注册表单 -->
+    <form id="registerForm" class="hidden">
+        <h2>账户注册</h2>
+        <div class="form-group">
+            <label for="regName">姓名:</label>
+            <input type="text" id="regName" required>
+        </div>
+
+        <div class="form-group">
+            <label for="regPhone">手机号:</label>
+            <input type="tel" id="regPhone" required>
+            <div class="form-note">请输入正确的11位手机号，以1开头</div>
+        </div>
+
+        <div class="form-group">
+            <label for="regIdCard">身份证:</label>
+            <input type="text" id="regIdCard" required>
+            <div class="form-note">请输入18位身份证号码</div>
+        </div>
+
+        <div class="form-group">
+            <label for="regCardId">银行卡号:</label>
+            <input type="text" id="regCardId" required>
+            <div class="form-note">请输入16-19位银行卡号</div>
+        </div>
+
+        <div class="form-group">
+            <label for="regPassword">密码:</label>
+            <input type="password" id="regPassword" required>
+            <div class="form-note">请输入六位纯数字密码</div>
+        </div>
+
+        <button type="submit">注册</button>
+    </form>
+</div>
+
+<script>
+    // 获取DOM元素
+    const showLoginBtn = document.getElementById('showLoginBtn');
+    const showRegisterBtn = document.getElementById('showRegisterBtn');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const messageBox = document.getElementById('messageBox');
+
+    // 显示登录表单
+    showLoginBtn.addEventListener('click', function() {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        messageBox.classList.add('hidden');
+    });
+
+    // 显示注册表单
+    showRegisterBtn.addEventListener('click', function() {
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        messageBox.classList.add('hidden');
+    });
+
+    // 注册表单提交
+    registerForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('regName').value;
+        const phone = document.getElementById('regPhone').value;
+        const idCard = document.getElementById('regIdCard').value;
+        const cardId = document.getElementById('regCardId').value;
+        const password = document.getElementById('regPassword').value;
+
+        // 验证密码是否为6位纯数字
+        if (!/^\d{6}$/.test(password)) {
+            showMessage('密码必须是6位纯数字', 'error');
+            return;
+        }
+
+        // 创建AJAX请求
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ATMSystem_war_exploded/welcome/register', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 400) {
+                const response = JSON.parse(xhr.responseText);
+
+                // 显示后端返回的消息
+                showMessage(response.massage, xhr.status === 200 ? 'success' : 'error');
+
+                // 如果有重定向路径，进行重定向
+                if (response.redirect) {
+                    setTimeout(function() {
+                        // 使用卡号拼接重定向路径
+                        window.location.href = '/ATMSystem_war_exploded'+response.redirect + '?cardId=' + cardId;
+                    }, 2000);
+                }
+            } else {
+                showMessage('注册请求失败，请稍后再试', 'error');
+            }
+        };
+
+        xhr.onerror = function() {
+            showMessage('网络错误，请检查网络连接', 'error');
+        };
+
+        // 发送数据
+        const data = {
+            name: name,
+            phone: phone,
+            idCard: idCard,
+            cardId: cardId,
+            password: password
+        };
+
+        xhr.send(JSON.stringify(data));
+    });
+
+    // 登录表单提交
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const cardId = document.getElementById('loginCardId').value;
+        const password = document.getElementById('loginPassword').value;
+
+        // 验证密码是否为6位纯数字
+        if (!/^\d{6}$/.test(password)) {
+            showMessage('密码必须是6位纯数字', 'error');
+            return;
+        }
+
+        // 创建AJAX请求
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/ATMSystem_war_exploded/welcome/login', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 400) {
+                const response = JSON.parse(xhr.responseText);
+
+                // 显示后端返回的消息
+                showMessage(response.massage, xhr.status === 200 ? 'success' : 'error');
+
+                // 如果有重定向路径，进行重定向
+                if (response.redirect) {
+                    setTimeout(function() {
+                        // 使用卡号拼接重定向路径
+                        window.location.href = '/ATMSystem_war_exploded'+response.redirect + '?cardId=' + cardId;
+                    }, 2000);
+                }
+            } else {
+                showMessage('登录请求失败，请稍后再试', 'error');
+            }
+        };
+
+        xhr.onerror = function() {
+            showMessage('网络错误，请检查网络连接', 'error');
+        };
+
+        // 发送数据
+        const data = {
+            cardId: cardId,
+            password: password
+        };
+
+        xhr.send(JSON.stringify(data));
+    });
+
+    // 显示消息函数
+    function showMessage(message, type) {
+        messageBox.textContent = message;
+        messageBox.className = 'message ' + type;
+        messageBox.classList.remove('hidden');
+    }
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@ package dao;
 import model.User;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public interface UserDAO {
      * @param balance 新余额
      * @return 是否成功
      */
-    boolean updateBalance(String cardId, BigDecimal balance);
+    public boolean updateBalance(String cardId, BigDecimal balance, Connection conn);
 
     /**
      * 通过银行卡查找信息
