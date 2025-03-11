@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import service.ATMService;
 import service.ServiceImpl.ATMServiceImpl;
+import util.MyJsonReader;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -23,6 +24,7 @@ import java.io.StringReader;
 @WebServlet("/welcome/*")
 public class WelcomeServlet extends HttpServlet {
     private final ATMService atmService = new ATMServiceImpl();
+    private final MyJsonReader myJsonReader = new MyJsonReader();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -42,22 +44,10 @@ public class WelcomeServlet extends HttpServlet {
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-        }
-        String jsonData = buffer.toString();
-
-        JsonReader jsonReader = Json.createReader(new StringReader(jsonData));
-        JsonObject jsonObject = jsonReader.readObject();
+        JsonObject jsonObject = myJsonReader.getJsonObject(request);
 
         String cardId = jsonObject.getString("cardId", "");
         String password = jsonObject.getString("password", "");
-        System.out.println("cardId: " + cardId);
-        System.out.println("password: " + password);
-        jsonReader.close();
 
         Boolean isSuccess;
         isSuccess = atmService.login(cardId,password);
@@ -82,24 +72,13 @@ public class WelcomeServlet extends HttpServlet {
     }
 
     private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        StringBuilder buffer = new StringBuilder();
-        BufferedReader reader = request.getReader();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
-        }
-        String jsonData = buffer.toString();
-
-        JsonReader jsonReader = Json.createReader(new StringReader(jsonData));
-        JsonObject jsonObject = jsonReader.readObject();
+        JsonObject jsonObject = myJsonReader.getJsonObject(request);
 
         String name = jsonObject.getString("name", "");
         String phone = jsonObject.getString("phone", "");
         String idCard = jsonObject.getString("idCard", "");
         String password = jsonObject.getString("password", "");
         String cardId = jsonObject.getString("cardId", "");
-
-        jsonReader.close();
 
         Boolean isSuccess;
         isSuccess = atmService.register(name,phone,idCard,cardId,password);

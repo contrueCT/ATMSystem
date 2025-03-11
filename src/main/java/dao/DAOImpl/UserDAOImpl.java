@@ -3,6 +3,7 @@ package dao.DAOImpl;
 import dao.UserDAO;
 import model.User;
 import util.DruidDBConnection;
+import util.SystemLogger;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -37,6 +38,7 @@ public class UserDAOImpl implements UserDAO {
             return rows>0;
         } catch (SQLException e) {
             System.out.println("添加用户失败:"+ e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
         }
         return false;
     }
@@ -52,6 +54,7 @@ public class UserDAOImpl implements UserDAO {
             return rows>0;
         }catch (SQLException e){
             System.out.println("添加用户失败:"+ e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
         }
         return false;
     }
@@ -76,6 +79,7 @@ public class UserDAOImpl implements UserDAO {
             return user;
         }catch(SQLException e){
             System.out.println("查找用户失败:"+ e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
         }
         return null;
     }
@@ -98,6 +102,7 @@ public class UserDAOImpl implements UserDAO {
             return user;
         }catch(SQLException e){
             System.out.println("查找用户失败:"+ e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
         }
         return null;
     }
@@ -125,6 +130,7 @@ public class UserDAOImpl implements UserDAO {
             return users;
         }catch (SQLException e){
             System.out.println("获取全部用户信息失败:"+ e.getMessage());
+            SystemLogger.logError("获取全部用户信息失败:",e);
         }
         return Collections.emptyList();
     }

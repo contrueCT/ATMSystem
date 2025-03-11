@@ -8,12 +8,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import service.ATMService;
 import service.ServiceImpl.ATMServiceImpl;
 import util.MyJsonReader;
+import util.SystemLogger;
 import static util.AccountsChoice.choice.*;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -22,6 +21,7 @@ import java.math.BigDecimal;
  */
 @WebServlet("/accounts/*")
 public class AccountServlet extends HttpServlet {
+
     ATMService atmService = new ATMServiceImpl();
     MyJsonReader myJsonReader = new MyJsonReader();
     @Override
@@ -59,6 +59,7 @@ public class AccountServlet extends HttpServlet {
 
 
         } catch (Exception e) {
+            SystemLogger.logError("请求处理失败，未能正常区分业务",e);
             throw new RuntimeException(e);
         }
     }

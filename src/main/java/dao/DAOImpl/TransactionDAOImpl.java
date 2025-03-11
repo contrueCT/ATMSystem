@@ -3,6 +3,7 @@ package dao.DAOImpl;
 import dao.TransactionDAO;
 import model.Transaction;
 import util.DruidDBConnection;
+import util.SystemLogger;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -11,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +23,7 @@ public class TransactionDAOImpl implements TransactionDAO {
         if(transaction == null){
             return false;
         }
-        String sql = "insert into transactions (user_id, type, amount, source_card, target_card) value (?,?,?,?,?)";
+        String sql = "insert into atm.transactions (user_id, type, amount, source_card, target_card) value (?,?,?,?,?)";
         try(Connection conn = DruidDBConnection.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
@@ -37,6 +37,7 @@ public class TransactionDAOImpl implements TransactionDAO {
 
         }catch (SQLException e){
             System.out.println("添加交易记录失败"+e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
         }
         return false;
     }
@@ -45,7 +46,7 @@ public class TransactionDAOImpl implements TransactionDAO {
         if(transaction == null){
             return false;
         }
-        String sql = "insert into transactions (user_id, type, amount, source_card, target_card) value (?,?,?,?,?)";
+        String sql = "insert into atm.transactions (user_id, type, amount, source_card, target_card) value (?,?,?,?,?)";
         try(PreparedStatement pstmt = conn.prepareStatement(sql)){
 
             pstmt.setInt(1, transaction.getUserId());
@@ -58,13 +59,14 @@ public class TransactionDAOImpl implements TransactionDAO {
 
         }catch (SQLException e){
             System.out.println("添加交易记录失败"+e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
         }
         return false;
     }
 
     @Override
     public List<Transaction> findTransactionByCardID(String cardId) {
-        String sql = "select * from transactions where source_card = ?";
+        String sql = "select * from atm.transactions where source_card = ?";
         List<Transaction> transactions = new ArrayList<>();
 
         try(Connection conn = DruidDBConnection.getConnection();
@@ -87,7 +89,8 @@ public class TransactionDAOImpl implements TransactionDAO {
             return transactions;
         }catch (SQLException e){
             System.out.println("获取全部交易记录失败"+e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
+            throw new RuntimeException(e);
         }
-        return Collections.emptyList();
     }
 }

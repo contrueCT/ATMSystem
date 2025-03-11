@@ -40,6 +40,7 @@ public class DatabaseInitializer {
             return true;
         }catch(SQLException e){
             System.out.println("数据库创建失败"+e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
             return false;
         }
 

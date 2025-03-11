@@ -25,9 +25,9 @@ public class DruidDBConnection {
                         Properties prop = new Properties();
                         try (InputStream in = DruidDBConnection.class
                                 .getClassLoader()
-                                .getResourceAsStream("druid.properties")) {
+                                .getResourceAsStream("db.properties")) {
                             if (in == null) {
-                                throw new IOException("Cannot find druid.properties");
+                                throw new IOException("Cannot find db.properties");
 
                             }
                             prop.load(in);
@@ -41,8 +41,9 @@ public class DruidDBConnection {
                         }
 
                     }catch (IOException e){
-                        e.printStackTrace();
+                        SystemLogger.logError(e.getMessage(),e);
                     } catch (Exception e) {
+                        SystemLogger.logError(e.getMessage(),e);
                         throw new RuntimeException(e);
                     }
                 }
@@ -66,6 +67,8 @@ public class DruidDBConnection {
             }
             catch (SQLException e) {
                 System.out.println("连接关闭失败");;
+                SystemLogger.logError(e.getMessage(),e);
+                throw new RuntimeException(e);
             }
         }
     }

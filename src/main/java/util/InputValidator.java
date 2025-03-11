@@ -42,6 +42,7 @@ public class InputValidator {
                 }
             } catch(NumberFormatException e)  {
                 System.out.println("输入格式错误，请重新输入");
+                SystemLogger.logError(e.getMessage(),e);
             }
         }
     }

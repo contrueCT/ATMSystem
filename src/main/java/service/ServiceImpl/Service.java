@@ -6,6 +6,8 @@ import model.Transaction;
 import model.User;
 import util.AccountLockManager;
 import util.DruidDBConnection;
+import util.MyDBConnection;
+import util.SystemLogger;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -31,7 +33,7 @@ public class Service {
         AccountLockManager.acquireLocks(cardToLock);
 
         try{
-            conn = DruidDBConnection.getConnection();
+            conn = MyDBConnection.getConnection();
             conn.setAutoCommit(false);
             if(transaction==null){
                 System.out.println("错误：交易记录对象不存在");
@@ -40,9 +42,13 @@ public class Service {
             //存款
             if("deposit".equals(transaction.getType())){
                 User user = userDAO.findUserById(cardNumber,conn);
+                if(user==null){
+                    throw new SQLException("根据卡号获取用户失败");
+                }
                 user.setBalance(user.getBalance().add(transaction.getAmount()));
                 if(userDAO.updateBalance(user.getCardId(), user.getBalance(),conn)){
                     System.out.println("更新余额成功");
+
                 }
                 else{
                     System.out.println("更新余额失败");
@@ -61,6 +67,9 @@ public class Service {
             //取款
             if("withdraw".equals(transaction.getType())){
                 User user = userDAO.findUserById(cardNumber,conn);
+                if(user==null){
+                    throw new SQLException("根据卡号获取用户失败");
+                }
                 user.setBalance(user.getBalance().subtract(transaction.getAmount()));
                 if(user.getBalance().compareTo(BigDecimal.ZERO)<0){
                     System.out.println("账户余额不足");
@@ -84,7 +93,13 @@ public class Service {
             //转账
             if("transfer".equals(transaction.getType())){
                 User user = userDAO.findUserById(cardNumber,conn);
+                if(user==null){
+                    throw new SQLException("根据卡号获取用户失败");
+                }
                 User target = userDAO.findUserById(transaction.getTargetCard());
+                if(target==null){
+                    throw new SQLException("根据卡号获取用户失败");
+                }
 
                 target.setBalance(target.getBalance().add(transaction.getAmount()));
                 user.setBalance(user.getBalance().subtract(transaction.getAmount()));
@@ -111,17 +126,23 @@ public class Service {
             return false;
         }catch(SQLException e){
             System.out.println("操作失败"+e.getMessage());
+            SystemLogger.logError(e.getMessage(),e);
             try {
                 if(conn!=null){
                     conn.rollback();
                 }
             } catch (SQLException ex) {
                 System.out.println("回滚事务失败"+ex.getMessage());
+                SystemLogger.logError(e.getMessage(),e);
             }
             System.out.println("回滚成功");
             return false;
         }finally{
-            DruidDBConnection.closeConnection(conn);
+            try{
+                conn.close();
+            }catch (SQLException e){
+                SystemLogger.logError("连接关闭失败",e);
+            }
             AccountLockManager.releaseLocks(cardToLock);
         }
 
